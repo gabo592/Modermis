@@ -4,12 +4,26 @@ import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
+import { createClient } from "@/utils/supabase/client";
 import ModermisLogo from "@/public/assets/icons/modermis.jpg";
 import Image from "next/image";
 import LoginForm from "@/components/auth/LoginForm";
 
 export default function LoginPage() {
   const router = useRouter();
+
+  const supabase = createClient();
+
+  supabase.auth
+    .getUser()
+    .then((response) => {
+      const { data, error } = response;
+
+      if (!error || data?.user) {
+        router.push("/home");
+      }
+    })
+    .catch((error) => console.log(error));
 
   return (
     <>

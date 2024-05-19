@@ -32,7 +32,7 @@ const RegisterForm = () => {
     },
   });
 
-  const submit = (values: z.infer<typeof formSchema>) => {
+  const submit = async (values: z.infer<typeof formSchema>) => {
     const { firstName, lastName, email, password } = values;
 
     const data = new FormData();
@@ -42,7 +42,7 @@ const RegisterForm = () => {
     data.append("email", email);
     data.append("password", password);
 
-    console.log(data);
+    await signup(data);
   };
 
   return (
