@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { login } from "@/app/auth/actions";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -28,8 +29,15 @@ const LoginForm = () => {
     },
   });
 
-  const submit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const submit = async (values: z.infer<typeof formSchema>) => {
+    const { email, password } = values;
+
+    const data = new FormData();
+
+    data.append("email", email);
+    data.append("password", password);
+
+    await login(data);
   };
 
   return (

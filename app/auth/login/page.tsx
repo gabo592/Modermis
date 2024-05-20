@@ -10,7 +10,6 @@ import LoginForm from "@/components/auth/LoginForm";
 
 export default function LoginPage() {
   const router = useRouter();
-
   return (
     <>
       <header className="flex flex-row items-center justify-between gap-4 p-4">

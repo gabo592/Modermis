@@ -10,7 +10,6 @@ import RegisterForm from "@/components/auth/RegisterForm";
 
 export default function RegisterPage() {
   const router = useRouter();
-
   return (
     <>
       <header className="flex flex-row items-center justify-between gap-4 p-4">

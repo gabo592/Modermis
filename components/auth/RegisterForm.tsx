@@ -14,9 +14,27 @@ import {
 import { Input } from "../ui/input";
 import { signup } from "@/app/auth/actions";
 
+const MAX_FILE_SIZE = 5000000; // 5 MB
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
 const formSchema = z.object({
-  firstName: z.string().min(3),
-  lastName: z.string().min(3),
+  image: z
+    .any()
+    .refine(
+      (file) => file?.size <= MAX_FILE_SIZE,
+      "El tamaño máximo para la imagen es de 5 MB"
+    )
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      "Solo se admiten formatos .jpg, .jpeg, .png y .webp."
+    ),
+  first_name: z.string().min(3),
+  last_name: z.string().min(3),
   email: z.string().email(),
   password: z.string().min(6),
 });
@@ -25,24 +43,24 @@ const RegisterForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       email: "",
       password: "",
     },
   });
 
-  const submit = (values: z.infer<typeof formSchema>) => {
-    const { firstName, lastName, email, password } = values;
+  const submit = async (values: z.infer<typeof formSchema>) => {
+    const { first_name, last_name, email, password } = values;
 
     const data = new FormData();
 
-    data.append("firstName", firstName);
-    data.append("lastName", lastName);
+    data.append("first_name", first_name);
+    data.append("last_name", last_name);
     data.append("email", email);
     data.append("password", password);
 
-    console.log(data);
+    await signup(data);
   };
 
   return (
@@ -50,7 +68,23 @@ const RegisterForm = () => {
       <form onSubmit={form.handleSubmit(submit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="firstName"
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Imagen</FormLabel>
+              <FormControl>
+                <Input accept="image/*" type="file" {...field} />
+              </FormControl>
+              <FormDescription>
+                Opcionalmente puede cambiar la imagen de perfil en los ajustes.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="first_name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Primer Nombre</FormLabel>
@@ -67,7 +101,7 @@ const RegisterForm = () => {
         />
         <FormField
           control={form.control}
-          name="lastName"
+          name="last_name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Primer Apellido</FormLabel>
