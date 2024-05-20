@@ -4,27 +4,12 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import ModermisLogo from "@/public/assets/icons/modermis.jpg";
 import RegisterForm from "@/components/auth/RegisterForm";
 
 export default function RegisterPage() {
   const router = useRouter();
-
-  const supabase = createClient();
-
-  supabase.auth
-    .getUser()
-    .then((response) => {
-      const { data, error } = response;
-
-      if (!error || data?.user) {
-        router.push("/home");
-      }
-    })
-    .catch((error) => console.log(error));
-
   return (
     <>
       <header className="flex flex-row items-center justify-between gap-4 p-4">
