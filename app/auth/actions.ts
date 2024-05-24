@@ -5,9 +5,9 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(formData: FormData) {
-  const supabase = createClient();
+const supabase = createClient();
 
+export async function login(formData: FormData) {
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {
@@ -27,7 +27,7 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const supabase = createClient();
+  const avatar_url = await submitFile(formData);
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
@@ -36,8 +36,9 @@ export async function signup(formData: FormData) {
     password: formData.get("password") as string,
     options: {
       data: {
-        first_name: formData.get("fist_name") as string,
+        first_name: formData.get("first_name") as string,
         last_name: formData.get("last_name") as string,
+        avatar_url: avatar_url,
       },
     },
   };
@@ -45,6 +46,7 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
+    console.log(error);
     redirect("/error");
   }
 
@@ -53,8 +55,6 @@ export async function signup(formData: FormData) {
 }
 
 export async function logout() {
-  const supabase = createClient();
-
   const { error } = await supabase.auth.signOut();
 
   if (error) {
@@ -63,4 +63,22 @@ export async function logout() {
 
   revalidatePath("/", "layout");
   redirect("/");
+}
+
+async function submitFile(formData: FormData) {
+  const image = formData.get("image") as File;
+
+  const { error } = await supabase.storage
+    .from("avatars")
+    .upload(`public/${image.name}`, image);
+
+  if (error) {
+    redirect("/error");
+  }
+
+  const { data } = supabase.storage
+    .from("avatars")
+    .getPublicUrl(`public/${image.name}`);
+
+  return data.publicUrl;
 }

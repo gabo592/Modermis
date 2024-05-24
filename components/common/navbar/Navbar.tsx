@@ -1,3 +1,5 @@
+"use client";
+
 import { Route } from "@/models/route";
 import NavbarLogo from "./NabarLogo";
 import { ModeToggle } from "@/components/mode-toggle";

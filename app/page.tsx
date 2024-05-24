@@ -1,5 +1,3 @@
-"use client";
-
 import { TypographyH1 } from "@/components/Typography";
 import Navbar from "@/components/common/navbar/Navbar";
 import MedicineImage from "@/public/assets/svg/medicine.svg";
