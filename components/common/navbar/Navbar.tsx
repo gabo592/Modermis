@@ -11,22 +11,18 @@ import NavbarMenu from "./NavbarMenu";
 
 const routes: Route[] = [
   {
-    id: 1,
     path: "/about",
     title: "Acerca de",
   },
   {
-    id: 2,
     path: "/contact",
     title: "Contacto",
   },
   {
-    id: 3,
     path: "/pricing",
     title: "Precios",
   },
   {
-    id: 4,
     path: "/faq",
     title: "Preguntas Frecuentes",
   },

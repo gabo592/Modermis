@@ -2,12 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
 import { createClient } from "@/utils/supabase/server";
 
-const supabase = createClient();
-
 export async function login(formData: FormData) {
+  const supabase = createClient();
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {
@@ -27,6 +25,7 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
+  const supabase = createClient();
   const avatar_url = await submitFile(formData);
 
   // type-casting here for convenience
@@ -55,6 +54,7 @@ export async function signup(formData: FormData) {
 }
 
 export async function logout() {
+  const supabase = createClient();
   const { error } = await supabase.auth.signOut();
 
   if (error) {
@@ -66,6 +66,7 @@ export async function logout() {
 }
 
 async function submitFile(formData: FormData) {
+  const supabase = createClient();
   const image = formData.get("image") as File;
 
   const { error } = await supabase.storage

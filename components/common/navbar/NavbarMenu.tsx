@@ -17,7 +17,7 @@ const NavbarMenu: React.FC<NavbarMenuProps> = ({ routes }) => {
     <NavigationMenu>
       <NavigationMenuList>
         {routes.map((route) => (
-          <NavigationMenuItem key={route.id}>
+          <NavigationMenuItem key={route.path}>
             <Link href={route.path} legacyBehavior passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 {route.title}

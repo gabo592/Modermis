@@ -30,7 +30,7 @@ const NavbarMobileMenu: FC<NavbarMobileMenuProps> = ({ routes }) => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {routes.map((route) => (
-            <DropdownMenuItem key={route.id}>
+            <DropdownMenuItem key={route.path}>
               <Link href={route.path}>{route.title}</Link>
             </DropdownMenuItem>
           ))}
