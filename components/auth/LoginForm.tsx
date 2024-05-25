@@ -1,3 +1,5 @@
+"use client";
+
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -14,13 +16,21 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { login } from "@/app/auth/actions";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email({
+    message: "Digite un correo electrónico válido.",
+  }),
+  password: z.string().min(6, {
+    message: "La contraseña debe tener al menos 6 caracteres.",
+  }),
 });
 
 const LoginForm = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,7 +47,9 @@ const LoginForm = () => {
     data.append("email", email);
     data.append("password", password);
 
+    setLoading(!loading);
     await login(data);
+    setLoading(!loading);
   };
 
   return (
@@ -81,10 +93,16 @@ const LoginForm = () => {
         />
 
         <div className="flex flex-col items-center gap-4">
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Iniciar Sesión
           </Button>
-          <Button asChild variant="outline" className="w-full">
+          <Button
+            asChild
+            variant="outline"
+            className="w-full"
+            disabled={loading}
+          >
             <Link href="/auth/register">Crear Cuenta</Link>
           </Button>
         </div>

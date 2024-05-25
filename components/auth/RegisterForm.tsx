@@ -1,6 +1,9 @@
+"use client";
+
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -13,33 +16,28 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { signup } from "@/app/auth/actions";
-
-const MAX_FILE_SIZE = 5000000; // 5 MB
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
+import { ChangeEvent, useState } from "react";
 
 const formSchema = z.object({
-  image: z
-    .any()
-    .refine(
-      (file) => file?.size <= MAX_FILE_SIZE,
-      "El tamaño máximo para la imagen es de 5 MB"
-    )
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      "Solo se admiten formatos .jpg, .jpeg, .png y .webp."
-    ),
-  first_name: z.string().min(3),
-  last_name: z.string().min(3),
-  email: z.string().email(),
-  password: z.string().min(6),
+  image: z.any(),
+  first_name: z.string().min(3, {
+    message: "El primer nombre debe tener al menos 3 caracteres.",
+  }),
+  last_name: z.string().min(3, {
+    message: "EL primer apellido debe tener al menos 3 caracteres.",
+  }),
+  email: z.string().email({
+    message: "Debe ingresar un correo electrónico válido.",
+  }),
+  password: z.string().min(6, {
+    message: "La contraseña debe tener al menos 6 caracteres.",
+  }),
 });
 
 const RegisterForm = () => {
+  const [image, setImage] = useState<File | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,16 +49,36 @@ const RegisterForm = () => {
   });
 
   const submit = async (values: z.infer<typeof formSchema>) => {
+    if (!image || image == null) {
+      alert("La imagen es requerida.");
+      return;
+    }
+
     const { first_name, last_name, email, password } = values;
 
     const data = new FormData();
 
+    data.append("image", image);
     data.append("first_name", first_name);
     data.append("last_name", last_name);
     data.append("email", email);
     data.append("password", password);
 
+    setLoading(!loading);
     await signup(data);
+    setLoading(!loading);
+  };
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (!files || files == null) {
+      return;
+    }
+
+    const file = files[0];
+
+    setImage(file);
   };
 
   return (
@@ -73,7 +91,12 @@ const RegisterForm = () => {
             <FormItem>
               <FormLabel>Imagen</FormLabel>
               <FormControl>
-                <Input accept="image/*" type="file" {...field} />
+                <Input
+                  accept="image/*"
+                  type="file"
+                  {...field}
+                  onChange={(e) => handleImageChange(e)}
+                />
               </FormControl>
               <FormDescription>
                 Opcionalmente puede cambiar la imagen de perfil en los ajustes.
@@ -154,7 +177,8 @@ const RegisterForm = () => {
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Crear Cuenta
         </Button>
       </form>

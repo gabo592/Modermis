@@ -1,21 +1,24 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import ModermisLogo from "@/public/assets/icons/modermis.jpg";
 import Image from "next/image";
 import LoginForm from "@/components/auth/LoginForm";
+import NavigationBackButton from "@/components/common/NavigationBackButton";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
-  const router = useRouter();
+export default async function LoginPage() {
+  const supabase = createClient();
+
+  const { error, data } = await supabase.auth.getUser();
+
+  if (!error || data?.user) {
+    redirect("/home");
+  }
+
   return (
     <>
       <header className="flex flex-row items-center justify-between gap-4 p-4">
-        <Button variant="outline" size="icon" onClick={() => router.back()}>
-          <ArrowLeftIcon />
-        </Button>
+        <NavigationBackButton />
         <h1 className="text-xl font-bold">Iniciar Sesión</h1>
         <ModeToggle />
       </header>

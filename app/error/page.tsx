@@ -7,6 +7,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import WarningImage from "@/public/assets/svg/warning.svg";
 import Image from "next/image";
 import { TypographyP } from "@/components/Typography";
+import NavigationBackButton from "@/components/common/NavigationBackButton";
 
 export default function ErrorPage() {
   const router = useRouter();
@@ -14,9 +15,7 @@ export default function ErrorPage() {
   return (
     <>
       <header className="flex flex-row items-center justify-between p-4">
-        <Button variant="outline" size="icon" onClick={() => router.back()}>
-          <ArrowLeftIcon />
-        </Button>
+        <NavigationBackButton />
         <h1 className="text-xl font-bold">Error</h1>
         <ModeToggle />
       </header>
